@@ -6,12 +6,6 @@ context.scale(20, 20);
 context.fillStyle = '#000';
 context.fillRect(0, 0, canvas.width, canvas.height);
 
-const matrix = [
-  [0,0,0],
-  [1,1,1],
-  [0,1,0],
-];
-
 function collisionDetection(arena, player) {
   const [m, o] = [player.matrix, player.position];
   for (let y = 0; y < matrix.length; ++y) {
@@ -33,6 +27,59 @@ function createMatrix(w, h) {
   }
   return matrix;
 }
+
+function createPiece(type) {
+  if (type === 'T') {
+    return [
+      [0, 0, 0],
+      [1, 1, 1],
+      [0, 1, 0]
+    ];
+  }
+  else if (type === 'O') {
+    return [
+      [1, 1],
+      [1, 1]
+    ];
+  }
+  else if (type === 'L') {
+    return [
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 1]
+    ];
+  }
+  else if (type === 'J') {
+    return [
+      [0, 1, 0],
+      [0, 1, 0],
+      [1, 1, 0]
+    ];
+  }
+  else if (type === 'I') {
+    return [
+      [0, 1, 0, 0],
+      [0, 1, 0, 0],
+      [0, 1, 0, 0],
+      [0, 1, 0, 0]
+    ];
+  }
+  else if (type === 'S') {
+    return [
+      [0, 1, 1],
+      [1, 1, 0],
+      [0, 0, 0]
+    ];
+  }
+  else if (type === 'Z') {
+    return [
+      [1, 1, 0],
+      [0, 1, 1],
+      [0, 0, 0]
+    ];
+  }
+}
+
 function draw() {
   context.fillStyle = '#000';
   context.fillRect(0, 0, canvas.width, canvas.height);
@@ -81,6 +128,14 @@ function playerMove(direction) {
   if(collisionDetection(arena, player)) {
     player.position.x -= direction;
   }
+}
+
+function playerReset() {
+  const pieces = 'ILJOTSZ';
+  player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
+  player.position.y = 0;
+  player.position.x = (arena[0].length / 2 | 0) -
+                      (player.matrix[0].length / 2 | 0);
 }
 
 function playerRotate(direction) {
