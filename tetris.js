@@ -82,6 +82,41 @@ function playerMove(direction) {
     player.position.x -= direction;
   }
 }
+
+function playerRotate(direction) {
+  const position = player.position.x;
+  let offset = 1;
+  rotate(player.matrix, direction);
+  while (collisionDetection(arena, player)) {
+    player.position.x += offset;
+    offset = -(offset + (offset > 0 ? 1 : -1));
+    if (offset > player.matrix[0].length) {
+      rotate(player.matrix, -direction);
+      player.position.x = position;
+      return;
+    }
+  }
+}
+
+function rotate(matrix, direction) {
+  for (let y = 0; y < matrix.length; ++y) {
+    for (let x = 0; x < y; ++x) {
+      [
+        matrix[x][y],
+        matrix[y][x],
+      ] = [
+        matrix[y][x],
+        matrix[x][y],
+      ];
+    }
+  }
+  if (direction > 0) {
+    matrix.forEach (row => row.reverse());
+  }
+  else {
+    matrix.reverse();
+  }
+}
 const arena = createMatrix(12, 20);
 
 let dropCounter = 0;
@@ -111,6 +146,12 @@ document.addEventListener('keydown', event => {
   }
   else if (event.keyCode === 40) {
     playerDrop();
+  }
+  else if (event.keyCode === 81) {
+    playerRotate(-1)
+  }
+  else if (event.keyCode === 87) {
+    playerRotate(1)
   }
 });
 
